@@ -79,7 +79,7 @@ vendor-update:
 
 vendor-install:
 	@echo Installing vendored packages
-	@go mod tidy && go mod vendor
+	@go mod tidy
 	@echo
 
 test: check-reqs
