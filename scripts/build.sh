@@ -34,11 +34,11 @@ LDFLAGS+="-X main.defaultGlusterd1Workdir=${GD1STATEDIR} -X main.defaultGlusterd
 LDFLAGS+="-X main.defaultConfFile=${CONFFILE}"
 LDFLAGS+=" -B 0x${GIT_SHA_FULL}"
 
-if [ "$FASTBUILD" == "yes" ];then
-  # Enable the `go build -i` flag to install dependencies during build and
-  # allow faster rebuilds of gluster-exporter.
-  INSTALLFLAG="-i"
-fi
+#if [ "$FASTBUILD" == "yes" ];then
+#  # Enable the `go build -i` flag to install dependencies during build and
+#  # allow faster rebuilds of gluster-exporter.
+#  INSTALLFLAG="-i"
+#fi
 
 echo "Building $BIN $VERSION"
 
