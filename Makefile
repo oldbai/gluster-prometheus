@@ -42,8 +42,6 @@ EXPORTER_RUNDIR = $(RUNDIR)/$(EXPORTER)
 
 GLUSTER_MGMT ?= "glusterd"
 
-DEPENV ?=
-
 FASTBUILD ?= yes
 
 .PHONY: all build binaries check check-go check-reqs install vendor-update vendor-install verify release check-protoc $(EXPORTER_BIN) $(EXPORTER_BUILD) test dist dist-vendor gen-service gen-version metrics-docgen
@@ -76,12 +74,12 @@ install:
 
 vendor-update:
 	@echo Updating vendored packages
-	@$(DEPENV) dep ensure -v -update
+	@go mod tidy
 	@echo
 
 vendor-install:
 	@echo Installing vendored packages
-	@$(DEPENV) dep ensure -v -vendor-only || $(MAKE) vendor-install
+	@go mod vendor
 	@echo
 
 test: check-reqs
