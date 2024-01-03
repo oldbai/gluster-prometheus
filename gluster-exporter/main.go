@@ -76,7 +76,7 @@ func main() {
 	kingpin.CommandLine.UsageWriter(os.Stdout)
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
-
+	log.Info("Starting exporter")
 	if *docgen {
 		generateMetricsDoc()
 		return
@@ -120,7 +120,7 @@ func main() {
 	gluster = glusterutils.MakeGluster(exporterConf)
 
 	// start := time.Now()
-
+	log.Info("Initializing exporter")
 	for _, m := range glusterMetrics {
 		if collectorConf, ok := exporterConf.CollectorsConf[m.name]; ok {
 			if !collectorConf.Disabled {
