@@ -149,7 +149,7 @@ func main() {
 		_, _ = fmt.Fprintf(os.Stderr, "No Metrics registered, Exiting..\n")
 		os.Exit(1)
 	}
-
+	log.Info("Exporter initialized successfully")
 	metricsPath := exporterConf.MetricsPath
 	port := exporterConf.Port
 	http.Handle(metricsPath, promhttp.Handler())
@@ -163,4 +163,5 @@ func main() {
 		_, _ = fmt.Fprintf(os.Stderr, "Failed to run exporter\nError: %s", err)
 		log.WithError(err).Fatal("Failed to run exporter")
 	}
+	log.Info("Exporter started successfully")
 }
