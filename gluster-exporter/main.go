@@ -1,8 +1,11 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"github.com/alecthomas/kingpin/v2"
+	"github.com/gluster/gluster-prometheus/pkg/logging"
+	"github.com/prometheus/exporter-toolkit/web"
+	"github.com/prometheus/exporter-toolkit/web/kingpinflag"
 	"net/http"
 	"os"
 	"runtime"
@@ -12,7 +15,6 @@ import (
 	"github.com/gluster/gluster-prometheus/gluster-exporter/conf"
 	"github.com/gluster/gluster-prometheus/pkg/glusterutils"
 	"github.com/gluster/gluster-prometheus/pkg/glusterutils/glusterconsts"
-	"github.com/gluster/gluster-prometheus/pkg/logging"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
@@ -28,9 +30,10 @@ var (
 )
 
 var (
-	showVersion                   = flag.Bool("version", false, "Show the version information")
-	docgen                        = flag.Bool("docgen", false, "Generate exported metrics documentation in Asciidoc format")
-	config                        = flag.String("config", defaultConfFile, "Config file path")
+	showVersion                   = kingpin.Flag("version", "Show the version information").Bool()
+	docgen                        = kingpin.Flag("docgen", "Generate exported metrics documentation in Asciidoc format").Bool()
+	config                        = kingpin.Flag("config", "Config file path").Default(defaultConfFile).String()
+	webConfigFile                 = kingpin.Flag("web.config.file", "Path to web configuration file").String()
 	defaultInterval time.Duration = 5
 	clusterIDLabel                = MetricLabel{
 		Name: "cluster_id",
@@ -68,8 +71,11 @@ func main() {
 	if err := logging.Init("", "-", "info"); err != nil {
 		log.Fatal("Init logging failed for stderr")
 	}
+	kitLogger := logging.NewLogger(log.StandardLogger())
 
-	flag.Parse()
+	kingpin.CommandLine.UsageWriter(os.Stdout)
+	kingpin.HelpFlag.Short('h')
+	kingpin.Parse()
 
 	if *docgen {
 		generateMetricsDoc()
@@ -79,6 +85,12 @@ func main() {
 	if *showVersion {
 		dumpVersionInfo()
 		return
+	}
+	//判断文件是否存在
+	if *webConfigFile != "" {
+		if _, err := os.Stat(*webConfigFile); err != nil {
+			return
+		}
 	}
 
 	var gluster glusterutils.GInterface
@@ -141,7 +153,13 @@ func main() {
 	metricsPath := exporterConf.MetricsPath
 	port := exporterConf.Port
 	http.Handle(metricsPath, promhttp.Handler())
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
+	//if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
+	//	_, _ = fmt.Fprintf(os.Stderr, "Failed to run exporter\nError: %s", err)
+	//	log.WithError(err).Fatal("Failed to run exporter")
+	//}
+	toolkitFlags := kingpinflag.AddFlags(kingpin.CommandLine, fmt.Sprintf(":%d", port))
+	server := &http.Server{}
+	if err := web.ListenAndServe(server, toolkitFlags, kitLogger); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Failed to run exporter\nError: %s", err)
 		log.WithError(err).Fatal("Failed to run exporter")
 	}
