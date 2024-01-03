@@ -45,10 +45,17 @@ type Collectors struct {
 	Disabled     bool   `toml:"disabled"`
 }
 
+// Auth struct defines the structure of authentication configuration
+type Auth struct {
+	User   string `toml:"user"`
+	Secret string `toml:"secret"`
+}
+
 // Config struct defines overall configurations
 // it embeds 'Globals' configuration
 type Config struct {
 	*Globals       `toml:"globals"`
+	*Auth          `toml:"auth"`
 	CollectorsConf map[string]Collectors `toml:"collectors"`
 }
 
