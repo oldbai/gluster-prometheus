@@ -92,6 +92,7 @@ func main() {
 			return
 		}
 	}
+	log.Info("Loading config")
 
 	var gluster glusterutils.GInterface
 	exporterConf, err := conf.LoadConfig(*config)
