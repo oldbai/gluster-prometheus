@@ -71,7 +71,6 @@ func main() {
 	if err := logging.Init("", "-", "info"); err != nil {
 		log.Fatal("Init logging failed for stderr")
 	}
-	kitLogger := logging.NewLogger(log.StandardLogger())
 
 	kingpin.CommandLine.UsageWriter(os.Stdout)
 	kingpin.HelpFlag.Short('h')
@@ -159,7 +158,7 @@ func main() {
 	//}
 	toolkitFlags := kingpinflag.AddFlags(kingpin.CommandLine, fmt.Sprintf(":%d", port))
 	server := &http.Server{}
-	if err := web.ListenAndServe(server, toolkitFlags, kitLogger); err != nil {
+	if err := web.ListenAndServe(server, toolkitFlags, logging.NewLogger(log.StandardLogger())); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Failed to run exporter\nError: %s", err)
 		log.WithError(err).Fatal("Failed to run exporter")
 	}
