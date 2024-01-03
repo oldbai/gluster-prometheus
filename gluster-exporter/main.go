@@ -75,7 +75,6 @@ func main() {
 	kingpin.CommandLine.UsageWriter(os.Stdout)
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
-	log.Info("Starting exporter")
 	if *docgen {
 		generateMetricsDoc()
 		return
@@ -91,11 +90,10 @@ func main() {
 			return
 		}
 	}
-	log.Info("Loading config")
 
 	var gluster glusterutils.GInterface
 	exporterConf, err := conf.LoadConfig(*config)
-	log.Info("Loading config.")
+
 	if err != nil {
 		log.WithError(err).Fatal("Loading global config failed")
 	}
@@ -107,11 +105,11 @@ func main() {
 				Fatal("Failed to create log directory")
 		}
 	}
-	log.Info("Loading config..")
+
 	if err := logging.Init(exporterConf.LogDir, exporterConf.LogFile, exporterConf.LogLevel); err != nil {
 		log.WithError(err).Fatal("Failed to initialize logging")
 	}
-	log.Info("Config loaded successfully")
+
 	// Set the Gluster Configurations used in glusterutils
 	if exporterConf.GlusterdWorkdir == "" {
 		exporterConf.GlusterdWorkdir =
@@ -120,7 +118,6 @@ func main() {
 	gluster = glusterutils.MakeGluster(exporterConf)
 
 	// start := time.Now()
-	log.Info("Initializing exporter")
 	for _, m := range glusterMetrics {
 		if collectorConf, ok := exporterConf.CollectorsConf[m.name]; ok {
 			if !collectorConf.Disabled {
@@ -149,7 +146,7 @@ func main() {
 		_, _ = fmt.Fprintf(os.Stderr, "No Metrics registered, Exiting..\n")
 		os.Exit(1)
 	}
-	log.Info("Exporter initialized successfully")
+
 	metricsPath := exporterConf.MetricsPath
 	port := exporterConf.Port
 	http.Handle(metricsPath, promhttp.Handler())

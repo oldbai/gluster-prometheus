@@ -9,7 +9,7 @@ require (
 	github.com/go-kit/log v0.2.1
 	github.com/prometheus/client_golang v1.18.0
 	github.com/prometheus/common v0.45.0
-	github.com/prometheus/exporter-toolkit v0.10.0
+	github.com/prometheus/exporter-toolkit v0.11.0
 	github.com/sirupsen/logrus v1.9.3
 )
 
