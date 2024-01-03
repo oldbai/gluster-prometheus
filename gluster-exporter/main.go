@@ -95,6 +95,7 @@ func main() {
 
 	var gluster glusterutils.GInterface
 	exporterConf, err := conf.LoadConfig(*config)
+	log.Info("Loading config.")
 	if err != nil {
 		log.WithError(err).Fatal("Loading global config failed")
 	}
@@ -106,7 +107,7 @@ func main() {
 				Fatal("Failed to create log directory")
 		}
 	}
-
+	log.Info("Loading config..")
 	if err := logging.Init(exporterConf.LogDir, exporterConf.LogFile, exporterConf.LogLevel); err != nil {
 		log.WithError(err).Fatal("Failed to initialize logging")
 	}
