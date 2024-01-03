@@ -99,7 +99,6 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("Loading global config failed")
 	}
-
 	if strings.ToLower(exporterConf.LogFile) != "stderr" && exporterConf.LogFile != "-" && strings.ToLower(exporterConf.LogFile) != "stdout" {
 		// Create Log dir
 		err = os.MkdirAll(exporterConf.LogDir, 0750)
@@ -112,7 +111,7 @@ func main() {
 	if err := logging.Init(exporterConf.LogDir, exporterConf.LogFile, exporterConf.LogLevel); err != nil {
 		log.WithError(err).Fatal("Failed to initialize logging")
 	}
-
+	log.Info("Config loaded successfully")
 	// Set the Gluster Configurations used in glusterutils
 	if exporterConf.GlusterdWorkdir == "" {
 		exporterConf.GlusterdWorkdir =
