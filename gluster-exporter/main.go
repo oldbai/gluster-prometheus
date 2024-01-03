@@ -155,6 +155,8 @@ func main() {
 	//	log.WithError(err).Fatal("Failed to run exporter")
 	//}
 	toolkitFlags := kingpinflag.AddFlags(kingpin.CommandLine, fmt.Sprintf(":%d", port))
+	log.Info(toolkitFlags)
+	log.Info(fmt.Printf("Starting exporter on port %d", port))
 	server := &http.Server{}
 	if err := web.ListenAndServe(server, toolkitFlags, logging.NewLogger(log.StandardLogger())); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Failed to run exporter\nError: %s", err)
